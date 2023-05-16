@@ -83,7 +83,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"    
 
-        import math    
+        import math
+
         def value(state, next_agent, depth):
             if depth == self.depth or state.isLosingState() or state.isWinningState():                          
                 return self.evaluationFunction(state)
@@ -102,11 +103,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
         
         def min_value(state, agent, depth):            
             v = math.inf
-            if agent == state.getNumAgents()-1: #last agent            
-                for action in state.getPossibleActions(agent):
+            for action in state.getPossibleActions(agent):
+                if agent == state.getNumAgents()-1: #last agent 
                     v = min(v, value(state.generateNextState(agent, action), 0, depth+1))
-            else:
-                for action in state.getPossibleActions(agent):
+                else:
                     v = min(v, value(state.generateNextState(agent, action), agent+1, depth))
             return v
 
@@ -127,11 +127,59 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     Your minimax agent with alpha-beta pruning (exercise 2)
     """
 
+        
+
     def getAction(self, gameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
+        import math        
+        def value(state, next_agent, depth, a, b):
+            if depth == self.depth or state.isLosingState() or state.isWinningState():                          
+                return self.evaluationFunction(state)
+
+            if next_agent == 0:
+                return max_value(state, depth, a, b)           
+            else:
+                return min_value(state, next_agent, depth, a, b)
+        
+
+        def max_value(state, depth, a, b):            
+            v = -math.inf
+            for action in state.getPossibleActions(0):           
+                v = max(v, value(state.generateNextState(0, action), 1, depth, a, b))
+                if v > b: return v
+                a = max(a, v)
+            return v
+        
+        def min_value(state, agent, depth, a, b):            
+            v = math.inf
+            for action in state.getPossibleActions(agent):
+                if agent == state.getNumAgents()-1: #last agent
+                    v = min(v, value(state.generateNextState(agent, action), 0, depth+1, a, b))
+                    if v < a: return v
+                    b = min(b, v)
+                else:               
+                    v = min(v, value(state.generateNextState(agent, action), agent+1, depth, a, b))
+                    if v < a: return v
+                    b = min(b, v)
+            return v
+
+
+        best_value = -math.inf
+        best_action = ''
+        a = -math.inf
+        b = math.inf
+        for action in gameState.getPossibleActions(0):            
+            score = value(gameState.generateNextState(0, action), 1, 0, a, b)            
+            if score > best_value:
+                best_value = score
+                best_action = action
+            if score > b:
+                return best_action
+            a = max(a, score)
+        return best_action
         util.raiseNotDefined()
 
 
@@ -148,6 +196,44 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
+        import math        
+        def value(state, next_agent, depth):
+            if depth == self.depth or state.isLosingState() or state.isWinningState():                          
+                return self.evaluationFunction(state)
+
+            if next_agent == 0:
+                return max_value(state, depth)           
+            else:
+                return exp_value(state, next_agent, depth)
+        
+
+        def max_value(state, depth):            
+            v = -math.inf
+            for action in state.getPossibleActions(0):           
+                v = max(v, value(state.generateNextState(0, action), 1, depth))              
+            return v
+        
+        def exp_value(state, agent, depth):            
+            v = 0
+            actions = state.getPossibleActions(agent)
+            p = 1 / len(actions)
+            for action in actions:
+                if agent == state.getNumAgents()-1: #last agent
+                    v += p * value(state.generateNextState(agent, action), 0, depth+1)                           
+                else:               
+                    v += p * value(state.generateNextState(agent, action), agent+1, depth)
+                   
+            return v
+
+
+        best_value = -math.inf
+        best_action = ''       
+        for action in gameState.getPossibleActions(0):            
+            score = value(gameState.generateNextState(0, action), 1, 0)            
+            if score > best_value:
+                best_value = score
+                best_action = action          
+        return best_action
         util.raiseNotDefined()
 
 
