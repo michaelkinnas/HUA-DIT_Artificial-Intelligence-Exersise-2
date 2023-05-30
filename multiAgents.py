@@ -101,6 +101,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 v = max(v, value(state.generateNextState(0, action), 1, depth))
             return v
         
+        
         def min_value(state, agent, depth):            
             v = math.inf
             for action in state.getPossibleActions(agent):
@@ -153,6 +154,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 a = max(a, v)
             return v
         
+        
         def min_value(state, agent, depth, a, b):            
             v = math.inf
             for action in state.getPossibleActions(agent):
@@ -165,7 +167,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     if v < a: return v
                     b = min(b, v)
             return v
-
+        
 
         best_value = -math.inf
         best_action = ''
@@ -180,7 +182,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 return best_action
             a = max(a, score)
         return best_action
-        util.raiseNotDefined()
+
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -213,6 +215,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 v = max(v, value(state.generateNextState(0, action), 1, depth))              
             return v
         
+        
         def exp_value(state, agent, depth):            
             v = 0
             actions = state.getPossibleActions(agent)
@@ -221,8 +224,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 if agent == state.getNumAgents()-1: #last agent
                     v += p * value(state.generateNextState(agent, action), 0, depth+1)                           
                 else:               
-                    v += p * value(state.generateNextState(agent, action), agent+1, depth)
-                   
+                    v += p * value(state.generateNextState(agent, action), agent+1, depth)                   
             return v
 
 
@@ -234,7 +236,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 best_value = score
                 best_action = action          
         return best_action
-        util.raiseNotDefined()
+   
 
 
 def betterEvaluationFunction(currentGameState):
@@ -245,6 +247,7 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+    
     util.raiseNotDefined()
 
 
